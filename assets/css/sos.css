@@ -1,0 +1,461 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f4f8f8;
+  color: #14272e;
+  font-family: Arial, sans-serif;
+}
+header {
+  height: 72px;
+  background: #fff;
+  border-bottom: 1px solid #e3eded;
+  padding: 0 max(15px, calc((100% - 760px) / 2));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: #08a58f;
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+.brand b,
+.brand small {
+  display: block;
+}
+.brand b {
+  font-size: 12px;
+}
+.brand small {
+  font-size: 9px;
+  color: #718087;
+}
+.hotline {
+  background: #df3037;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 22px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 11px;
+}
+main {
+  max-width: 760px;
+  margin: auto;
+  padding: 32px 16px 42px;
+}
+.hero {
+  text-align: center;
+}
+.hero > span {
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: bold;
+  color: #08a58f;
+}
+.hero h1 {
+  font-size: 42px;
+  margin: 10px 0;
+}
+.hero p {
+  color: #718087;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.sos {
+  width: 190px;
+  height: 190px;
+  border: 13px solid #ffe0e0;
+  border-radius: 50%;
+  background: #e42f36;
+  color: #fff;
+  box-shadow: 0 14px 35px #d52f3540;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto 15px;
+  cursor: pointer;
+}
+.sos strong {
+  font-size: 48px;
+}
+.sos small {
+  font-size: 8px;
+  font-weight: bold;
+}
+.sos.sending {
+  animation: pulse 0.7s infinite;
+}
+.card {
+  background: #fff;
+  border: 1px solid #e2ebed;
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 16px;
+}
+.card h2 {
+  font-size: 15px;
+}
+.types {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+.types button {
+  border: 1px solid #e0e9eb;
+  background: #fff;
+  border-radius: 9px;
+  padding: 13px;
+  font-size: 10px;
+  color: #536970;
+}
+.types button.selected {
+  border-color: #08a58f;
+  background: #eaf8f5;
+  color: #087f70;
+  font-weight: bold;
+}
+textarea,
+input {
+  width: 100%;
+  font: inherit;
+  border: 1px solid #e0e9eb;
+  border-radius: 8px;
+  padding: 11px;
+  margin-top: 12px;
+}
+textarea {
+  height: 75px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+label {
+  font-size: 10px;
+  font-weight: bold;
+  color: #536970;
+}
+.secondary {
+  margin-top: 10px;
+  border: 1px solid #b9dcd6;
+  background: #f1faf8;
+  color: #087f70;
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.confirmation,
+.error,
+.safety {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+}
+.confirmation {
+  background: #eaf8f2;
+  color: #087d68;
+  font-size: 12px;
+}
+.error {
+  background: #fff0f0;
+  color: #c52e34;
+  font-size: 11px;
+}
+.safety {
+  background: #fff7e8;
+  color: #91620c;
+  font-size: 11px;
+}
+.hidden {
+  display: none;
+}
+footer {
+  text-align: center;
+  padding: 18px;
+  background: #fff;
+  border-top: 1px solid #e3eded;
+  color: #7a898d;
+  font-size: 10px;
+}
+footer a {
+  color: #d72f35;
+  font-weight: bold;
+}
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 20px #e42f3622;
+  }
+}
+@media (max-width: 550px) {
+  .types {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .hero h1 {
+    font-size: 35px;
+  }
+  .sos {
+    width: 165px;
+    height: 165px;
+  }
+}
+
+/* SOS UI refresh — same green/lime visual language */
+body {
+  background: #f3f4f1;
+  color: #17251f;
+}
+header {
+  background: #fff;
+  border-bottom: 0;
+  box-shadow: 0 4px 18px rgba(32, 52, 43, 0.05);
+}
+.logo {
+  background: #8edb18;
+  color: #23432f;
+}
+.hotline {
+  background: #1f4b3a;
+  border-radius: 14px;
+}
+.card {
+  border: 0;
+  border-radius: 20px;
+  box-shadow: 0 6px 24px rgba(32, 52, 43, 0.055);
+}
+.hero > span {
+  color: #6da51e;
+}
+.hero h1 {
+  color: #1f3428;
+}
+.types button {
+  border-color: #e1e6e2;
+  border-radius: 13px;
+}
+.types button.selected {
+  border-color: #8edb18;
+  background: #eef7e5;
+  color: #4f731d;
+}
+.secondary {
+  border: 0;
+  background: #e8eee9;
+  color: #42564b;
+  border-radius: 12px;
+}
+
+/* Whole-system proportion alignment for public SOS pages */
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.sos-page,
+body {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Arial,
+    sans-serif;
+}
+header {
+  height: 76px;
+  min-height: 76px;
+}
+main {
+  width: min(100%, 860px);
+  max-width: 860px;
+  padding: 28px 18px 42px;
+}
+.hero h1 {
+  font-size: clamp(34px, 5vw, 46px);
+  letter-spacing: -1.5px;
+}
+.hero p {
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.sos {
+  width: 190px;
+  height: 190px;
+}
+.card {
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(25, 49, 43, 0.06);
+}
+.types {
+  gap: 10px;
+}
+.types button {
+  min-height: 50px;
+}
+.confirmation,
+.error,
+.safety {
+  line-height: 1.5;
+}
+@media (max-width: 550px) {
+  header {
+    padding: 0 14px;
+  }
+  .hotline {
+    padding: 9px 12px;
+  }
+  .brand small {
+    font-size: 8px;
+  }
+  main {
+    padding: 22px 12px 30px;
+  }
+  .hero h1 {
+    font-size: 34px;
+  }
+  .sos {
+    width: 170px;
+    height: 170px;
+  }
+  .sos strong {
+    font-size: 42px;
+  }
+  .card {
+    padding: 16px;
+  }
+  .types {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Final public SOS fluid sizing */
+body {
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+header {
+  height: clamp(68px, 5vw, 76px);
+  min-height: 68px;
+}
+main {
+  width: min(100% - 24px, 900px);
+  max-width: 900px;
+  padding: clamp(20px, 3vw, 34px) 0 clamp(28px, 4vw, 44px);
+}
+.hero h1 {
+  font-size: clamp(32px, 5vw, 48px);
+}
+.sos {
+  width: clamp(155px, 20vw, 200px);
+  height: clamp(155px, 20vw, 200px);
+}
+.card {
+  padding: clamp(15px, 2vw, 22px);
+  border-radius: clamp(16px, 2vw, 21px);
+}
+@media (max-width: 550px) {
+  main {
+    width: calc(100% - 20px);
+    padding: 18px 0 30px;
+  }
+  .sos {
+    width: 170px;
+    height: 170px;
+  }
+}
+
+/* SOS usability: large clear target, immediate tap, readable report counter. */
+.sos {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.12s ease,
+    opacity 0.12s ease;
+}
+.sos:not(:disabled):active {
+  transform: scale(0.97);
+}
+.sos:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+.sos.sending {
+  animation: pulse 0.7s infinite;
+}
+.sos small {
+  display: block;
+  max-width: 145px;
+  text-align: center;
+  line-height: 1.35;
+  margin-top: 5px;
+  font-size: 9px;
+}
+.confirmation small {
+  display: inline-block;
+  margin-top: 6px;
+  font-weight: bold;
+}
+@media (max-width: 550px) {
+  .sos small {
+    max-width: 130px;
+    font-size: 8px;
+  }
+}
+
+
+/* Required photo and in-page camera capture */
+.camera-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.camera-actions .secondary {
+  margin-top: 0;
+  cursor: pointer;
+}
+.camera-panel {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e1e6e2;
+  border-radius: 12px;
+  background: #f8faf8;
+}
+.camera-panel video {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #17251f;
+}
+.camera-panel p {
+  margin: 8px 0 0;
+  color: #536970;
+  font-size: 12px;
+  line-height: 1.5;
+}
+#contact[aria-required="true"] {
+  border-color: #b7c8bd;
+}

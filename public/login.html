@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="description"
+      content="Secure login for the Barangay Tondod Emergency Dispatch System."
+    />
+    <title>Sign In | Barangay Tondod Emergency Dispatch</title>
+    <script src="assets/js/deployment-config.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/login.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#b91c1c" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32.png" />
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  </head>
+  <body class="login-body">
+    <main class="login-page">
+      <section class="login-card" aria-label="Barangay Emergency Dispatch login">
+        <div class="login-brand-panel">
+          <div class="brand-row">
+            <div class="brand-logo" aria-hidden="true">
+              <i class="fa-solid fa-house-medical"></i>
+            </div>
+            <div>
+              <p class="brand-name" data-deployment="barangay_name">BARANGAY TONDOD</p>
+              <p class="brand-subtitle">EMERGENCY DISPATCH SYSTEM</p>
+            </div>
+          </div>
+
+          <div class="brand-message">
+            <span class="eyebrow"><i class="fa-solid fa-circle"></i> LIVE OPERATIONS</span>
+            <h1>Ready when<br /><span>every second matters.</span></h1>
+            <p>
+              Secure access for emergency personnel to coordinate incidents, responders, and
+              real-time operations.
+            </p>
+          </div>
+
+          <div class="system-status">
+            <span class="status-dot"></span>
+            <div>
+              <strong>System operational</strong>
+              <small>Emergency services online</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="login-form-panel">
+          <div class="form-content">
+            
+            <p class="form-eyebrow">WELCOME BACK</p>
+            <h2>Sign in</h2>
+            <p class="form-intro">Use your authorized account to access the dispatch system.</p>
+
+            <div id="error" class="login-error" role="alert"></div>
+
+            <form id="loginForm" novalidate>
+              <div class="field-group">
+                <label for="username">Username</label>
+                <div class="input-wrap">
+                  <i class="fa-regular fa-user" aria-hidden="true"></i>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Enter username"
+                    aria-label="Username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                  <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autocomplete="off"
+                    placeholder="Enter password"
+                    aria-label="Password"
+                    required
+                  />
+                  <button
+                    id="passwordToggle"
+                    class="password-toggle"
+                    type="button"
+                    aria-label="Show password"
+                  >
+                    <i class="fa-regular fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="access-note">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Authorized personnel only. Accounts are managed by an Administrator.</span>
+              </div>
+
+              <button id="submit" class="login-submit" type="submit">
+                <span>SIGN IN</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </form>
+
+            <div class="help-box">
+              <i class="fa-solid fa-circle-info"></i>
+              <div>
+                <strong>Need an account?</strong>
+                <p>Contact your Administrator to create or update your access.</p>
+              </div>
+            </div>
+          </div>
+
+          
+        </div>
+      </section>
+    </main>
+
+    <script src="assets/js/api-base.js"></script>
+    <script src="assets/js/login.js?v=20261007b"></script>
+    <script>
+      (function () {
+        try {
+          localStorage.removeItem('username');
+          localStorage.removeItem('password');
+          sessionStorage.removeItem('username');
+          sessionStorage.removeItem('password');
+        } catch (e) {}
+        function blank() {
+          const u = document.getElementById('username'),
+            p = document.getElementById('password');
+          if (u) u.value = '';
+          if (p) p.value = '';
+        }
+        blank();
+        window.addEventListener('pageshow', blank);
+      })();
+    </script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
+    </script>
+  </body>
+</html>

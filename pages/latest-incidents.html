@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Today's latest emergency incidents for Barangay Tondod Emergency Dispatch System."
+    />
+    <title>Latest Incidents | Barangay Tondod Emergency Dispatch</title>
+    <script src="assets/js/deployment-config.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/latest-incidents.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#b91c1c" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/icon-32.png" />
+    <link rel="apple-touch-icon" href="../assets/icons/icon-192.png" />
+  </head>
+  <body class="latest-page-body">
+    <main class="latest-screen">
+      <header class="latest-header">
+        <div class="latest-brand">
+          <div class="latest-logo"><i class="fa-solid fa-house-medical"></i></div>
+          <div>
+            <strong data-deployment="barangay_name">BARANGAY TONDOD</strong>
+            <span>EMERGENCY DISPATCH SYSTEM</span>
+          </div>
+        </div>
+
+        <div class="latest-heading">
+          <span class="latest-live"><i class="fa-solid fa-circle"></i> LIVE OPERATIONS</span>
+          <h1>Latest Incidents</h1>
+          <p id="latestDate">TODAY · LOADING DATE</p>
+        </div>
+
+        <div class="latest-actions">
+          <button type="button" id="latestAlertButton" class="latest-alert-button">
+            <i class="fa-solid fa-bell"></i> ENABLE ALARM
+          </button>
+          <div class="latest-clock" id="latestClock">00:00:00</div>
+          <a href="index.html" class="latest-back"
+            ><i class="fa-solid fa-arrow-left"></i> DASHBOARD</a
+          >
+        </div>
+      </header>
+
+      <section class="latest-board" aria-label="Today's emergency incident board">
+        <div class="board-topline">
+          <div>
+            <span class="board-kicker">EMERGENCY OPERATIONS CENTER</span>
+            <h2>Today’s Incident Board</h2>
+          </div>
+          <div class="board-meta">
+            <span><i class="fa-solid fa-arrows-rotate"></i> AUTO REFRESH 2 SEC</span>
+            <span id="latestCount">0 INCIDENTS</span>
+          </div>
+        </div>
+
+        <div class="flight-head" role="row">
+          <span>TIME</span>
+          <span>INCIDENT</span>
+          <span>TYPE</span>
+          <span>LOCATION</span>
+          <span>PRIORITY</span>
+          <span>STATUS</span>
+          <span>UNIT</span>
+        </div>
+
+        <div id="latestRows" class="latest-rows">
+          <div class="latest-loading">
+            <i class="fa-solid fa-spinner fa-spin"></i> CONNECTING TO INCIDENT FEED...
+          </div>
+        </div>
+      </section>
+
+      <section class="latest-live-ticker" aria-label="Active emergency ticker">
+        <div class="ticker-label">
+          <i class="fa-solid fa-tower-broadcast"></i><span>ACTIVE EMERGENCIES</span>
+        </div>
+        <div class="ticker-window">
+          <div id="latestTickerTrack" class="ticker-track">
+            <span class="ticker-placeholder">CONNECTING TO LIVE INCIDENT FEED...</span>
+          </div>
+        </div>
+        <div class="ticker-status"><span class="ticker-dot"></span> LIVE</div>
+      </section>
+
+      <div
+        id="latestCriticalOverlay"
+        class="latest-emergency-overlay"
+        hidden
+        aria-live="assertive"
+        aria-modal="true"
+        role="alertdialog"
+      >
+        <section class="latest-emergency-panel">
+          <div class="latest-critical-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <p class="latest-critical-label">NEW EMERGENCY</p>
+          <h2 id="latestCriticalIncident">CRITICAL INCIDENT REPORTED</h2>
+          <p id="latestCriticalLocation">Location unavailable</p>
+          <div class="latest-critical-meta">
+            <span id="latestCriticalNumber">INCIDENT —</span>
+            <span id="latestCriticalType">EMERGENCY</span>
+            <span id="latestCriticalTime">REPORTED --:--</span>
+          </div>
+          <button type="button" id="latestCriticalClose" class="latest-emergency-close">
+            ACKNOWLEDGE ALERT
+          </button>
+        </section>
+      </div>
+
+      <footer class="latest-footer">
+        <div><i class="fa-solid fa-shield-halved"></i> SECURE OPERATIONS DISPLAY</div>
+        <div><i class="fa-solid fa-satellite-dish"></i> REAL-TIME INCIDENT FEED</div>
+        <div>
+          <i class="fa-solid fa-phone"></i> EMERGENCY HOTLINE
+          <a href="tel:911" data-deployment="hotline-link">911</a>
+        </div>
+      </footer>
+    </main>
+
+    <script src="assets/js/api-base.js"></script>
+    <script src="assets/js/notification-sound.js"></script>
+    <script src="assets/js/latest-incidents.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
+    </script>
+  </body>
+</html>

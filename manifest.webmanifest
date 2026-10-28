@@ -1,0 +1,25 @@
+{
+  "name": "Barangay Tondod Emergency Dispatch",
+  "short_name": "Tondod Emergency",
+  "start_url": "/login.html",
+  "display": "standalone",
+  "background_color": "#0b3d2e",
+  "theme_color": "#0b7a45",
+  "description": "Mobile emergency dispatch and SOS reporting system.",
+  "scope": "/",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Barangay Emergency Dispatch System</title>
+    <script src="assets/js/deployment-config.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#b91c1c" />
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/icons/icon-32.png" />
+    <link rel="apple-touch-icon" href="../assets/icons/icon-192.png" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <div class="logo"><i class="fa-solid fa-house-medical"></i></div>
+          <div>
+            <h1>BARANGAY<br /><span>EMERGENCY</span><br />DISPATCH SYSTEM</h1>
+            <small>SMART. RAPID. CONNECTED.</small>
+          </div>
+        </div>
+        <nav>
+          <a class="active" data-page="dashboard"><i class="fa-solid fa-house"></i>Dashboard</a
+          ><a href="#incidents" data-page="incidents"
+            ><i class="fa-solid fa-briefcase-medical"></i>Incidents</a
+          ><a href="#dispatch" data-page="dispatch"><i class="fa-solid fa-rocket"></i>Dispatch</a
+          ><a href="#responders" data-page="responders"
+            ><i class="fa-solid fa-users"></i>Responders</a
+          ><a href="#reports" data-page="reports"
+            ><i class="fa-solid fa-chart-column"></i>Reports & Analytics</a
+          ><a href="#users" data-page="users" class="admin-only"
+            ><i class="fa-solid fa-user-group"></i>Users</a
+          ><a href="#settings" data-page="settings"><i class="fa-solid fa-gear"></i>Settings</a>
+        </nav>
+        <div class="zone">
+          <strong data-deployment="barangay_name">Barangay Tondod</strong
+          ><span data-deployment="city">San Jose City</span><small>Emergency Operations</small
+          >
+        </div>
+      </aside>
+      <main>
+        <header class="topbar">
+          <button class="menu" id="menu"><i class="fa-solid fa-bars"></i></button>
+          <div class="search">
+            <i class="fa-solid fa-magnifying-glass"></i
+            ><input id="globalSearch" placeholder="Search incidents, reports, responders..." />
+          </div>
+          <div class="top-right">
+            <button class="bell" id="notifBtn" title="Emergency notifications">
+              <i class="fa-regular fa-bell"></i><b id="notifCount">0</b></button
+            ><button class="alert-enable" id="enableAlerts" title="Enable emergency alert sound">
+              <i class="fa-solid fa-volume-high"></i> ALERTS
+            </button>
+            <div class="profile">
+              <button
+                class="avatar profile-avatar-button"
+                id="userAvatar"
+                type="button"
+                title="Change profile picture"
+              >
+                AU</button
+              ><span
+                ><strong id="userName">Admin User</strong
+                ><small id="userRole">Administrator</small></span
+              ><button class="logout-btn" id="logoutBtn">
+                <i class="fa-solid fa-right-from-bracket"></i>
+              </button>
+            </div>
+          </div>
+        </header>
+        <section class="content">
+          <div id="apiStatus" class="api-status">Connecting to API...</div>
+          <div id="page-dashboard" class="page active-page">
+            <div class="page-title">
+              <div>
+                <h2>Emergency Operations Dashboard</h2>
+                <p>Real-time overview of barangay incidents and response activities.</p>
+              </div>
+            </div>
+            <div class="stats">
+              <div class="stat purple">
+                <span>TOTAL INCIDENTS</span><strong id="totalIncidents">0</strong
+                ><small>All recorded incidents</small><i class="fa-regular fa-file-lines"></i>
+              </div>
+              <div class="stat red">
+                <span>ACTIVE INCIDENTS</span><strong id="activeIncidents">0</strong
+                ><small>Needs attention</small><i class="fa-regular fa-bell"></i>
+              </div>
+              <div class="stat blue">
+                <span>RESPONDERS</span><strong id="responderCount">0</strong
+                ><small>Available / on duty</small><i class="fa-regular fa-user"></i>
+              </div>
+              <div class="stat green">
+                <span>COMPLETED</span><strong id="completedIncidents">0</strong
+                ><small>Resolved incidents</small><i class="fa-regular fa-circle-check"></i>
+              </div>
+              <div class="stat orange">
+                <span>PENDING</span><strong id="pendingIncidents">0</strong
+                ><small>Requires attention</small><i class="fa-regular fa-clock"></i>
+              </div>
+            </div>
+            <div class="grid">
+              <section class="card overview">
+                <div class="head">
+                  <h2>Incident Overview</h2>
+                  <select id="overviewRange">
+                    <option value="7">Last 7 days</option>
+                    <option value="30">Last 30 days</option>
+                  </select>
+                </div>
+                <div class="chart"><canvas id="incidentChart"></canvas></div>
+              </section>
+              <section class="card categories">
+                <div class="head">
+                  <h2>Incident Categories</h2>
+                  <a
+                    href="#"
+                    onclick="
+                      showPage('incidents');
+                      return false;
+                    "
+                    >View All</a
+                  >
+                </div>
+                <div class="categories-list" id="categoriesList"></div>
+              </section>
+              <section class="card recent">
+                <div class="head">
+                  <h2>Recent Incidents</h2>
+                  <div class="head-actions">
+                    <a
+                      href="#incidents"
+                      onclick="
+                        showPage('incidents');
+                        return false;
+                      "
+                      >View All</a
+                    >
+                  </div>
+                </div>
+                <div id="recentIncidents"></div>
+              </section>
+              <section class="card response">
+                <div class="head"><h2>Response Status</h2></div>
+                <div class="meter">
+                  <svg viewBox="0 0 120 120">
+                    <circle class="track" cx="60" cy="60" r="48" />
+                    <circle class="progress" id="responseProgress" cx="60" cy="60" r="48" />
+                  </svg>
+                  <div>
+                    <strong id="responseRate">0%</strong><small>Response<br />Status</small>
+                  </div>
+                </div>
+                <p class="increase" id="responseSummary">Loading...</p>
+                <hr />
+                <div class="row">🟢 On Scene <b id="onScene">0</b></div>
+                <div class="row">🔵 En Route <b id="enRoute">0</b></div>
+                <div class="row">🟠 Standby <b id="standby">0</b></div>
+              </section>
+              <section class="card responders">
+                <div class="head">
+                  <h2>Available Responders</h2>
+                  <a
+                    href="#"
+                    onclick="
+                      showPage('responders');
+                      return false;
+                    "
+                    >Manage</a
+                  >
+                </div>
+                <div id="respondersList"></div>
+              </section>
+            </div>
+          </div>
+
+          <div id="page-incidents" class="page">
+            <div class="page-title">
+              <div>
+                <h2>Incident Management</h2>
+                <p>Search, filter, review, and update emergency incidents.</p>
+              </div>
+            </div>
+            <div class="toolbar">
+              <input
+                id="incidentSearch"
+                placeholder="Search incident number, location, reporter..."
+              /><select id="incidentStatus">
+                <option value="">All Status</option>
+                <option>Pending</option>
+                <option>Dispatched</option>
+                <option>Active</option>
+                <option>Resolved</option>
+                <option>Cancelled</option></select
+              ><select id="incidentPriority">
+                <option value="">All Priority</option>
+                <option>Critical</option>
+                <option>High</option>
+                <option>Moderate</option>
+                <option>Low</option></select
+              ><select id="incidentCategory">
+                <option value="">All Categories</option>
+                <option>Medical Emergency</option>
+                <option>Fire Incident</option>
+                <option>Security Concern</option>
+                <option>Disaster / Natural Calamity</option>
+                <option>Others</option></select
+              ><button class="secondary" onclick="loadIncidents()">
+                <i class="fa-solid fa-filter"></i> FILTER
+              </button>
+            </div>
+            <div class="card table-card">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Incident</th>
+                      <th>Category</th>
+                      <th>Location</th>
+                      <th>Priority</th>
+                      <th>Status</th>
+                      <th>Responder</th>
+                      <th>Reported</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="incidentTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="page-dispatch" class="page">
+            <div class="page-title">
+              <div>
+                <h2>Dispatch Center</h2>
+                <p>Assign responders and track active emergency operations.</p>
+              </div>
+            </div>
+            <div class="dispatch-grid">
+              <div class="card">
+                <div class="head">
+                  <h2>Needs Dispatch</h2>
+                  <span class="pill critical" id="dispatchCount">0</span>
+                </div>
+                <div id="dispatchQueue"></div>
+              </div>
+              <div class="card responder-availability-card">
+                <div class="head responder-head">
+                  <div>
+                    <h2><i class="fa-solid fa-users-gear"></i> Responder Availability</h2>
+                    <small>Monitor who is ready for deployment.</small>
+                  </div>
+                </div>
+                <div class="responder-summary" id="dispatchResponderSummary">
+                  <span
+                    ><i class="fa-solid fa-circle-check"></i
+                    ><b id="availableResponderCount">0</b> Available</span
+                  ><span
+                    ><i class="fa-solid fa-route"></i><b id="enRouteResponderCount">0</b> En
+                    Route</span
+                  >
+                </div>
+                <div id="dispatchResponders"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="page-responders" class="page">
+            <div class="page-title">
+              <div>
+                <h2>Responder Management</h2>
+                <p>Manage emergency teams, contact numbers, and availability.</p>
+              </div>
+            </div>
+            <div class="toolbar">
+              <input id="responderSearch" placeholder="Search responder..." /><select
+                id="responderStatus"
+              >
+                <option value="">All Status</option>
+                <option>Available</option>
+                <option>On Duty</option>
+                <option>On Scene</option>
+                <option>En Route</option>
+                <option>Standby</option>
+                <option>Unavailable</option></select
+              ><button class="secondary" onclick="loadRespondersPage()">FILTER</button>
+            </div>
+            <div class="card table-card">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Responder</th>
+                      <th>Type</th>
+                      <th>Phone</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="responderTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="page-reports" class="page">
+            <div class="page-title">
+              <div>
+                <h2>Reports & Analytics</h2>
+                <p>Generate operational summaries for the selected period.</p>
+              </div>
+            </div>
+            <div class="toolbar">
+              <label>From <input type="date" id="reportFrom" /></label
+              ><label>To <input type="date" id="reportTo" /></label
+              ><span class="report-hint"
+                ><i class="fa-solid fa-circle-info"></i> Daily ≤ 62 days · Monthly ≤ 1 year · Yearly
+                &gt; 1 year</span
+              ><button class="primary" onclick="generateReportAndPrint()">
+                <i class="fa-solid fa-file-export"></i> GENERATE REPORT
+              </button>
+            </div>
+            <div class="stats report-stats">
+              <div class="stat purple">
+                <span>TOTAL</span><strong id="reportTotal">0</strong><small>Selected period</small>
+              </div>
+              <div class="stat green">
+                <span>RESOLVED</span><strong id="reportResolved">0</strong><small>Completed</small>
+              </div>
+              <div class="stat red">
+                <span>ACTIVE</span><strong id="reportActive">0</strong><small>Still open</small>
+              </div>
+              <div class="stat orange">
+                <span>CRITICAL</span><strong id="reportCritical">0</strong
+                ><small>High attention</small>
+              </div>
+            </div>
+            <div class="grid report-grid">
+              <section class="card">
+                <div class="head"><h2>Incidents by Category</h2></div>
+                <div class="chart"><canvas id="reportChart"></canvas></div>
+              </section>
+              <section class="card">
+                <div class="head"><h2>Status Breakdown</h2></div>
+                <div id="statusBreakdown" class="breakdown"></div>
+              </section>
+              <section class="card table-card">
+                <div class="head"><h2>Daily Volume</h2></div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Incidents</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dailyReport"></tbody>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <div id="page-users" class="page admin-only-page">
+            <div class="page-title">
+              <div>
+                <h2>User Management</h2>
+                <p>
+                  Create and manage system accounts. Responder accounts are created here and
+                  automatically appear in Responder Management.
+                </p>
+              </div>
+              <div class="user-management-actions">
+                <button class="primary" type="button" onclick="openUserModal()">
+                  <i class="fa-solid fa-user-plus"></i> ADD USER
+                </button>
+              </div>
+            </div>
+            <div class="card table-card">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Username</th>
+                      <th>Role</th>
+                      <th>Status</th>
+                      <th>Created</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="userTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="page-settings" class="page">
+            <div class="page-title">
+              <div>
+                <h2>System Settings</h2>
+                <p>Basic configuration for this deployment.</p>
+              </div>
+            </div>
+            <div class="settings-grid">
+              <div class="card settings-card">
+                <h2>Barangay Information</h2>
+                <label
+                  >Barangay Name<input
+                    value="Barangay Tondod"
+                    id="barangayName"
+                    data-deployment-value="barangay_name" /></label
+                ><label
+                  >City<input
+                    value="San Jose City"
+                    id="barangayCity"
+                    data-deployment-value="city" /></label
+                ><label
+                  >Emergency Hotline<input
+                    value="911"
+                    id="hotline"
+                    data-deployment-value="hotline"
+                    type="tel"
+                    inputmode="tel"
+                    autocomplete="off"
+                    placeholder="e.g. 911 or 09934819706"
+                  /><small class="settings-help"
+                    >Default: 911. Changes are saved to the server and automatically applied across
+                    the entire system, including labels, buttons, links, headers, footers, SOS
+                    pages, and other deployment-aware screens.</small
+                  ></label
+                ><button class="primary" onclick="saveSettings()">SAVE SETTINGS</button>
+              </div>
+              <div class="card settings-card">
+                <h2>System Status</h2>
+                <div class="system-row"><span>API Connection</span><b class="ok">Connected</b></div>
+                <div class="system-row">
+                  <span>Authentication</span><b class="ok">Session Active</b>
+                </div>
+                <div class="system-row"><span>Auto Refresh</span><b>30 seconds</b></div>
+                <div class="system-row"><span>Database</span><b>MySQL / MariaDB</b></div>
+              </div>
+            </div>
+          </div>
+
+          <footer>
+            <div>🏃 <b>24/7</b> AVAILABLE</div>
+            <div>◷ <b>REAL-TIME</b> UPDATES</div>
+            <div>🛡 <b>SECURE</b> & RELIABLE</div>
+            <div>🎧 <b>EMERGENCY HOTLINE</b> <span data-deployment="hotline">911</span></div>
+          </footer>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal" id="incidentModal">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h2>Report Emergency Incident</h2>
+          <button onclick="closeModal('incidentModal')">×</button>
+        </div>
+        <form id="incidentForm" class="form-grid">
+          <div class="gps-capture">
+            <button type="button" class="secondary" id="captureIncidentGps">
+              <i class="fa-solid fa-location-crosshairs"></i> USE MY CURRENT LOCATION</button
+            ><span id="gpsCaptureStatus">GPS not captured</span>
+          </div>
+          <input type="hidden" name="latitude" id="incidentLatitude" /><input
+            type="hidden"
+            name="longitude"
+            id="incidentLongitude"
+          /><label
+            >Category<select name="category" required>
+              <option>Medical Emergency</option>
+              <option>Fire Incident</option>
+              <option>Security Concern</option>
+              <option>Disaster / Natural Calamity</option>
+              <option>Others</option>
+            </select></label
+          ><label
+            >Priority<select name="priority">
+              <option>Critical</option>
+              <option>High</option>
+              <option selected>Moderate</option>
+              <option>Low</option>
+            </select></label
+          ><label class="full"
+            >Location<input
+              name="location"
+              required
+              placeholder="Purok / street / landmark" /></label
+          ><label>Reporter Name<input name="reporter_name" placeholder="Optional" /></label
+          ><label>Reporter Phone<input name="reporter_phone" placeholder="09xxxxxxxxx" /></label
+          ><label class="full"
+            >Description<textarea
+              name="description"
+              rows="4"
+              placeholder="Describe the emergency..."
+            ></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="button" class="secondary" onclick="closeModal('incidentModal')">
+              Cancel</button
+            ><button class="primary">Submit Incident</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal" id="profileModal">
+      <div class="modal-card profile-modal-card">
+        <div class="modal-head">
+          <div>
+            <span class="eyebrow">MY PROFILE</span>
+            <h2>Profile Picture</h2>
+          </div>
+          <button onclick="closeModal('profileModal')" aria-label="Close">×</button>
+        </div>
+        <form id="profileForm" class="profile-self-form">
+          <div class="profile-self-main">
+            <div class="profile-self-preview" id="selfProfilePreview">
+              <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="profile-self-info">
+              <p class="profile-self-name" id="profileSelfName">Current User</p>
+              <p class="profile-self-role" id="profileSelfRole">Account</p>
+              <label class="upload-btn"
+                ><i class="fa-solid fa-camera"></i> Choose Photo<input
+                  id="selfProfilePicture"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  hidden /></label
+              ><small class="profile-self-help">JPG, PNG or WEBP · Max 2 MB</small>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="secondary" onclick="closeModal('profileModal')">
+              Cancel</button
+            ><button class="primary" type="submit">
+              <i class="fa-solid fa-check"></i> SAVE PHOTO
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="modal" id="userModal">
+      <div class="modal-card user-modal-card">
+        <div class="modal-head">
+          <div>
+            <span class="eyebrow">ACCOUNT MANAGEMENT</span>
+            <h2 id="userModalTitle">Add New User</h2>
+          </div>
+          <button onclick="closeModal('userModal')" aria-label="Close">×</button>
+        </div>
+        <form id="userForm" class="form-grid user-form">
+          <div class="profile-upload">
+            <div class="profile-preview" id="profilePreview"><i class="fa-solid fa-user"></i></div>
+            <label class="upload-btn"
+              ><i class="fa-solid fa-camera"></i> Choose Photo<input
+                id="profilePicture"
+                name="profile_picture_file"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                hidden /></label
+            ><small>JPG, PNG or WEBP · Max 2 MB</small>
+          </div>
+          <div class="user-fields">
+            <label>Full Name<input name="full_name" required placeholder="Enter full name" /></label
+            ><label>Username<input name="username" required placeholder="Enter username" /></label
+            ><label
+              >Role<select name="role">
+                <option>Administrator</option>
+                <option>Responder</option>
+              </select></label
+            ><label>Phone Number<input name="phone" placeholder="09xxxxxxxxx" /></label
+            ><label
+              >Password
+              <div class="password-field">
+                <input
+                  id="userPassword"
+                  name="password"
+                  type="password"
+                  minlength="6"
+                  placeholder="Minimum 6 characters"
+                  autocomplete="new-password"
+                /><button
+                  type="button"
+                  class="password-toggle"
+                  data-target="userPassword"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </button></div></label
+            ><label
+              >Confirm Password
+              <div class="password-field">
+                <input
+                  id="userConfirmPassword"
+                  name="confirm_password"
+                  type="password"
+                  minlength="6"
+                  placeholder="Re-enter password"
+                  autocomplete="new-password"
+                /><button
+                  type="button"
+                  class="password-toggle"
+                  data-target="userConfirmPassword"
+                  aria-label="Show password"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </button></div></label
+            ><label
+              >Account Status<select name="status">
+                <option value="active">Active / Approved</option>
+                <option value="inactive">Inactive / Pending</option>
+              </select></label
+            >
+          </div>
+          <div class="form-actions">
+            <button type="button" class="secondary" onclick="closeModal('userModal')">Cancel</button
+            ><button class="primary"><i class="fa-solid fa-check"></i> Save User</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="assets/js/deployment-config.js"></script>
+    <script src="assets/js/api-base.js"></script>
+    <script src="assets/js/notification-sound.js"></script>
+    <script src="assets/js/script.js?v=20261009-3"></script>
+    <script src="assets/js/session-timeout.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
+    </script>
+  </body>
+</html>

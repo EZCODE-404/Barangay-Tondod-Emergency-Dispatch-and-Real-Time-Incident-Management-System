@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Bystander SOS | Barangay Tondod</title>
+    <link rel="stylesheet" href="assets/css/sos.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#b91c1c" />
+  </head>
+  <body>
+    <script src="assets/js/deployment-config.js"></script>
+    <header>
+      <div class="brand">
+        <div class="logo"><i class="fa-solid fa-house-medical"></i></div>
+        <div>
+          <b data-deployment="barangay_name">BARANGAY TONDOD</b><small>Public Emergency SOS</small>
+        </div>
+      </div>
+      <a href="tel:911" class="hotline" >☎ 09xxxxxxxx</a>
+    </header>
+    <main>
+      <section class="hero">
+        <span>EMERGENCY ASSISTANCE</span>
+        <h1>Need Help?</h1>
+        <p>
+          If you are witnessing or involved in an emergency, send an SOS. You do not need an
+          account. Your location, contact number, and incident photo will be sent to the dispatcher. Each browser can
+          submit up to 2 SOS reports per day.
+        </p>
+        <button id="sosButton" class="sos">
+          <i class="fa-solid fa-bell"></i><strong>SOS</strong><small>CHECKING REPORT LIMIT…</small>
+        </button>
+        <div id="locationStatus">📍 Preparing GPS...</div>
+      </section>
+      <section class="card">
+        <h2>What happened?</h2>
+        <div class="types">
+          <button data-type="Medical Emergency">Medical</button
+          ><button data-type="Fire Incident">Fire</button
+          ><button data-type="Road Accident">Accident</button
+          ><button data-type="Security Concern">Security</button
+          ><button data-type="Disaster / Natural Calamity">Disaster</button
+          ><button data-type="Others">Other</button>
+        </div>
+        <textarea id="description" placeholder="Brief description (optional)"></textarea
+        ><label
+          class="photo-upload"
+          for="incidentPhoto"
+          style="display: block; margin-top: 14px; font-weight: 700"
+          >Incident photo <span aria-hidden="true">*</span><input
+            id="incidentPhoto"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            aria-required="true"
+            style="display: block; margin-top: 8px; font-weight: 400"
+          /><small style="display: block; color: #64748b; margin-top: 5px"
+            >Required · JPG, PNG, or WEBP · Maximum 5 MB</small
+          ></label
+        >
+        <div class="camera-actions">
+          <button id="openCamera" class="secondary" type="button">📷 Open Camera</button>
+          <button id="capturePhoto" class="secondary hidden" type="button">Capture Photo</button>
+          <button id="cancelCamera" class="secondary hidden" type="button">Close Camera</button>
+        </div>
+        <div id="cameraPanel" class="camera-panel hidden">
+          <video id="cameraPreview" autoplay playsinline muted aria-label="Live camera preview"></video>
+          <p id="cameraStatus" role="status">Allow camera access when prompted.</p>
+        </div>
+        <div id="photoPreview" style="margin-top: 10px"></div>
+      </section>
+      <section class="card">
+        <h2>Your information</h2>
+        <div class="grid">
+          <label>Name (optional)<input id="reporterName" placeholder="Your name" /></label
+          ><label>Contact number <span aria-hidden="true">*</span><input id="contact" type="tel" inputmode="tel" autocomplete="tel" placeholder="09XXXXXXXXX" required aria-required="true" /></label>
+        </div>
+        <label
+          >Location / landmark (optional)<input
+            id="manualLocation"
+            placeholder="e.g. Purok 3 near Barangay Hall" /></label
+        ><button id="locate" class="secondary">📍 Refresh GPS</button>
+      </section>
+      <div id="confirmation" class="confirmation hidden"></div>
+      <div id="errorBox" class="error hidden"></div>
+      
+    </main>
+    <footer>
+      <span data-deployment="barangay_name">Barangay Tondod</span> Emergency Dispatch System ·
+      
+    </footer>
+    <script src="assets/js/api-base.js"></script>
+    <script src="assets/js/sos.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
+    </script>
+  </body>
+</html>

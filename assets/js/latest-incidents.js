@@ -593,9 +593,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await checkForNewIncidents();
 
-  setInterval(loadLatestIncidents, 2000);
+  setInterval(loadLatestIncidents, 10000);
 
-  setInterval(checkForNewIncidents, 2000);
+  setInterval(checkForNewIncidents, 10000);
 });
 
 /*

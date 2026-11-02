@@ -22,6 +22,7 @@ This is an existing PHP/MySQL web application for incident reporting, dispatch, 
 ## Production configuration
 
 - Configure `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASS` as server environment variables where your host supports them. The application does not automatically load `.env` files.
+- For the InfinityFree capstone demo, follow [the InfinityFree demo deployment guide](docs/INFINITYFREE_DEMO_DEPLOYMENT.md). InfinityFree's free hosting does not support setting PHP environment variables, so create a server-only `config/config.php` with the database values shown in its control panel. Do not upload your local XAMPP `config/config.php`.
 - Use a dedicated database account with only the required permissions. Do not use MySQL `root` for a public deployment.
 - Use HTTPS and unique account credentials. Never deploy a database with a known or shared password.
 - Create the first Administrator only after importing the schema. Confirm that the account can log in, then verify that `setup-admin.php` is locked.
@@ -29,7 +30,7 @@ This is an existing PHP/MySQL web application for incident reporting, dispatch, 
 
 ## Existing database: login throttling migration
 
-Fresh installations receive the `login_attempt_limits` table from `database/schema.sql`. If the application was installed before that table was added, back up the database and run `database/migrations/2026_10_13_create_login_attempt_limits.sql` once in phpMyAdmin. The migration uses `CREATE TABLE IF NOT EXISTS` and does not delete existing records.
+Fresh installations receive the `login_attempt_limits` table from `database/schema.sql`. This repository snapshot does not include the previously referenced `database/migrations/2026_10_13_create_login_attempt_limits.sql` file. For an older database that lacks the table, back up first and use only a migration file that is present in the package and has been reviewed; do not re-import the fresh-install schema over existing data.
 
 Other features may require migrations that are not included in every ZIP revision. Before running an upgrade, confirm the exact migration file exists in this package and inspect it. Do not run an undocumented reset script or re-import a schema into a database containing records unless you have verified its behavior and have a restorable backup.
 

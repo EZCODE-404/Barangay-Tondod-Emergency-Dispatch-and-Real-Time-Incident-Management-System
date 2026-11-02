@@ -53,5 +53,5 @@
     }
   };
   document.addEventListener('DOMContentLoaded', () => window.loadDeploymentSettings());
-  setInterval(() => window.loadDeploymentSettings(), 5000);
+  setInterval(() => window.loadDeploymentSettings(), 30000);
 })();

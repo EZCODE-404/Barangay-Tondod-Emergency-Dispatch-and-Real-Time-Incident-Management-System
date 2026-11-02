@@ -1,12 +1,11 @@
 <?php
 /**
  * Database-backed login throttling.
- * Limits are temporary and scoped to an IP and an IP/username pair so that
- * a third party cannot permanently lock a user's account from another network.
+ * Limits are temporary and scoped to an IP/username pair so failed attempts
+ * against one account do not block other accounts sharing the same network.
  */
 const LOGIN_LIMIT_WINDOW_MINUTES = 15;
 const LOGIN_LIMIT_PAIR_MAX = 8;
-const LOGIN_LIMIT_IP_MAX = 30;
 
 function login_limit_keys(string $username): array
 {
@@ -15,16 +14,10 @@ function login_limit_keys(string $username): array
   $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
   $normalizedUsername = strtolower(trim($username));
 
-  return [
-    [
-      'key' => hash('sha256', 'pair:' . $ip . "\0" . $normalizedUsername),
-      'limit' => LOGIN_LIMIT_PAIR_MAX,
-    ],
-    [
-      'key' => hash('sha256', 'ip:' . $ip),
-      'limit' => LOGIN_LIMIT_IP_MAX,
-    ],
-  ];
+  return [[
+    'key' => hash('sha256', 'pair:' . $ip . "\0" . $normalizedUsername),
+    'limit' => LOGIN_LIMIT_PAIR_MAX,
+  ]];
 }
 
 /** Return seconds until a block expires, or 0 when the request may proceed. */

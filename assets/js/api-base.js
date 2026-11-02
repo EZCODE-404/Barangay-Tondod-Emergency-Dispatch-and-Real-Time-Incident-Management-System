@@ -13,30 +13,38 @@
     return [...new Set(out)];
   }
 
-  window.API_BASE_PROMISE = (async () => {
-    if (location.protocol === 'file:') {
-      throw new Error('Open this application through Apache/XAMPP, not as a file (file://).');
-    }
-    for (const base of candidates()) {
-      try {
-        const response = await fetch(base + 'index.php', {
-          method: 'GET',
-          credentials: 'same-origin',
-          cache: 'no-store',
-          headers: { Accept: 'application/json' },
-        });
-        if (!response.ok) continue;
-        const text = await response.text();
+  function resolveApiBase() {
+    return (async () => {
+      if (location.protocol === 'file:') {
+        throw new Error('Open this application through Apache/XAMPP, not as a file (file://).');
+      }
+      for (const base of candidates()) {
         try {
-          const data = JSON.parse(text);
-          if (data && data.status === 'online') return base.replace(/\/$/, '');
+          const response = await fetch(base + 'index.php', {
+            method: 'GET',
+            credentials: 'same-origin',
+            cache: 'no-store',
+            headers: { Accept: 'application/json' },
+          });
+          if (!response.ok) continue;
+          const text = await response.text();
+          try {
+            const data = JSON.parse(text);
+            if (data && data.status === 'online') return base.replace(/\/$/, '');
+          } catch (_) {}
         } catch (_) {}
-      } catch (_) {}
-    }
-    throw new Error(
-      'Could not find the API folder. Check that the api folder is inside the project web root.',
-    );
-  })();
+      }
+      throw new Error(
+        'Could not find the API folder. Check that the api folder is inside the project web root.',
+      );
+    })();
+  }
+
+  window.API_BASE_PROMISE = resolveApiBase();
+  window.retryApiBase = () => {
+    window.API_BASE_PROMISE = resolveApiBase();
+    return window.API_BASE_PROMISE;
+  };
 
   window.apiUrl = async (ep) => `${await window.API_BASE_PROMISE}/${String(ep).replace(/^\//, '')}`;
 

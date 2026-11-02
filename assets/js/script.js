@@ -5,6 +5,7 @@ let map = null,
   chart = null,
   reportChart = null,
   audioContext = null,
+  dashboardLastUpdated = null,
   notificationEnabled = localStorage.getItem('bt_admin_alerts') === '1',
   browserNotificationEnabled =
     typeof Notification !== 'undefined' && Notification.permission === 'granted',
@@ -329,10 +330,12 @@ async function loadDashboard() {
     $('enRoute').textContent = get('En Route');
     $('standby').textContent = get('Standby');
     $('responseSummary').textContent =
-      `${s.completed} resolved of ${s.total_incidents} total incidents`;
-    $('responseRate').textContent = s.total_incidents
-      ? Math.round((s.completed / s.total_incidents) * 100) + '%'
-      : '0%';
+      `${s.completed} of ${s.total_incidents} incidents resolved (all time)`;
+    const resolutionRate = s.total_incidents ? s.completed / s.total_incidents : 0;
+    $('responseRate').textContent = Math.round(resolutionRate * 100) + '%';
+    const resolutionRing = $('responseProgress');
+    if (resolutionRing)
+      resolutionRing.style.strokeDashoffset = String(302 * (1 - resolutionRate));
     const c = $('incidentChart');
     if (c && window.Chart) {
       chart?.destroy();
@@ -363,14 +366,38 @@ async function loadDashboard() {
               )}"><i class="fa-solid fa-circle"></i>${esc(x.status || 'Unavailable')}</span></div>`,
         )
         .join('') || '<div class="empty">No responders registered.</div>';
-    $('apiStatus').textContent = 'Connected';
+    dashboardLastUpdated = new Date();
+    updateDashboardStatus(false);
     renderLiveMap(d.map_incidents || d.recent_incidents || []);
     const ml = document.querySelector('#liveIncidentMap .map-loading');
     if (ml) ml.style.display = (d.map_incidents || []).some(validGps) ? 'none' : 'block';
   } catch (e) {
-    $('apiStatus').textContent = 'API error';
-    toast(e.message, false);
+    updateDashboardStatus(true);
   }
+}
+function updateDashboardStatus(error, loading = false) {
+  const status = $('apiStatus');
+  if (!status) return;
+  const text = $('apiStatusText');
+  const updated = $('apiUpdated');
+  const retry = $('retryDashboard');
+  const nextText = loading
+    ? 'Reconnecting to API...'
+    : error
+      ? 'Connection lost. Dashboard data may be out of date.'
+      : 'Live';
+  if (text && text.textContent !== nextText) text.textContent = nextText;
+  status.classList.toggle('error', error);
+  status.classList.toggle('loading', loading);
+  status.classList.toggle('online', !error && !loading);
+  if (updated) {
+    updated.textContent = dashboardLastUpdated
+      ? `Last updated ${dashboardLastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+      : error
+        ? 'No successful update yet'
+        : 'Waiting for first update';
+  }
+  if (retry) retry.hidden = !error;
 }
 async function loadIncidents() {
   try {
@@ -397,6 +424,18 @@ async function loadDispatchPage() {
   try {
     const d = await apiFetch('incidents.php?active=1'),
       q = d.incidents || [];
+    const priority = { critical: 0, high: 1, moderate: 2, low: 3 };
+    q.sort((a, b) => {
+      const priorityOrder =
+        (priority[String(a.priority || '').toLowerCase()] ?? 4) -
+        (priority[String(b.priority || '').toLowerCase()] ?? 4);
+      if (priorityOrder) return priorityOrder;
+      const time = (incident) => {
+        const parsed = Date.parse(String(incident.created_at || '').replace(' ', 'T'));
+        return Number.isNaN(parsed) ? Number.MAX_SAFE_INTEGER : parsed;
+      };
+      return time(a) - time(b);
+    });
     $('dispatchCount').textContent = q.length;
     $('dispatchQueue').innerHTML =
       q
@@ -1222,8 +1261,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   $('globalSearch')?.addEventListener('input', (e) => {
     if ($('incidentSearch')) $('incidentSearch').value = e.target.value;
+  });
+  $('globalSearch')?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    if ($('incidentSearch')) $('incidentSearch').value = e.currentTarget.value;
     showPage('incidents');
-    loadIncidents();
+  });
+  $('retryDashboard')?.addEventListener('click', async (e) => {
+    const button = e.currentTarget;
+    button.disabled = true;
+    button.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Checking...';
+    updateDashboardStatus(false, true);
+    try {
+      await window.retryApiBase();
+      await loadDashboard();
+    } catch (_) {
+      updateDashboardStatus(true);
+    } finally {
+      button.disabled = false;
+      button.innerHTML = '<i class="fa-solid fa-rotate-right"></i> Retry';
+    }
   });
   $('incidentForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1296,7 +1354,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
   });
 
-  $('incidentSearch')?.addEventListener('input', loadIncidents);
+  $('incidentSearch')?.addEventListener('input', (e) => {
+    if ($('globalSearch')) $('globalSearch').value = e.target.value;
+    loadIncidents();
+  });
   $('incidentStatus')?.addEventListener('change', loadIncidents);
   $('incidentPriority')?.addEventListener('change', loadIncidents);
   $('incidentCategory')?.addEventListener('change', loadIncidents);

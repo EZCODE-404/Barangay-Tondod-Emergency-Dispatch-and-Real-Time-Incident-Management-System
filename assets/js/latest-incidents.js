@@ -461,21 +461,11 @@ async function loadLatestIncidents() {
       throw new Error(payload.message || `Unable to load incidents (${response.status}).`);
     }
 
-    const today = new Date();
-
     const incidents = (payload.incidents || []).filter((incident) => {
-      const created = new Date(String(incident.created_at || '').replace(' ', 'T'));
+  const status = String(incident.status || '').trim();
 
-      const status = String(incident.status || '').trim();
-
-      const isToday =
-        !Number.isNaN(created.getTime()) &&
-        created.getFullYear() === today.getFullYear() &&
-        created.getMonth() === today.getMonth() &&
-        created.getDate() === today.getDate();
-
-      return isToday && ['Pending', 'Dispatched', 'Active'].includes(status);
-    });
+  return ['Pending', 'Dispatched', 'Active'].includes(status);
+});
 
     incidents.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
 

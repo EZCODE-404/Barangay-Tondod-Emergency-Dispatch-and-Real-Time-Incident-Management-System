@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>Barangay Emergency Dispatch System</title>
     <script src="assets/js/deployment-config.js"></script>
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/style.css?v=20261102-1" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -50,7 +50,14 @@
           <button class="menu" id="menu"><i class="fa-solid fa-bars"></i></button>
           <div class="search">
             <i class="fa-solid fa-magnifying-glass"></i
-            ><input id="globalSearch" placeholder="Search incidents, reports, responders..." />
+            ><label class="sr-only" for="globalSearch">Search incidents</label
+            ><input
+              id="globalSearch"
+              type="search"
+              aria-label="Search incidents"
+              placeholder="Search incidents, then press Enter"
+              enterkeyhint="search"
+            />
           </div>
           <div class="top-right">
             <button class="bell" id="notifBtn" title="Emergency notifications">
@@ -76,7 +83,13 @@
           </div>
         </header>
         <section class="content">
-          <div id="apiStatus" class="api-status">Connecting to API...</div>
+          <div id="apiStatus" class="api-status" role="status" aria-live="polite">
+            <span id="apiStatusText">Connecting to API...</span>
+            <span id="apiUpdated" class="api-updated" aria-hidden="true">Waiting for first update</span>
+            <button id="retryDashboard" class="secondary mini" type="button" hidden>
+              <i class="fa-solid fa-rotate-right"></i> Retry
+            </button>
+          </div>
           <div id="page-dashboard" class="page active-page">
             <div class="page-title">
               <div>
@@ -85,25 +98,25 @@
               </div>
             </div>
             <div class="stats">
-              <div class="stat purple">
-                <span>TOTAL INCIDENTS</span><strong id="totalIncidents">0</strong
-                ><small>All recorded incidents</small><i class="fa-regular fa-file-lines"></i>
-              </div>
               <div class="stat red">
-                <span>ACTIVE INCIDENTS</span><strong id="activeIncidents">0</strong
-                ><small>Needs attention</small><i class="fa-regular fa-bell"></i>
-              </div>
-              <div class="stat blue">
-                <span>RESPONDERS</span><strong id="responderCount">0</strong
-                ><small>Available / on duty</small><i class="fa-regular fa-user"></i>
-              </div>
-              <div class="stat green">
-                <span>COMPLETED</span><strong id="completedIncidents">0</strong
-                ><small>Resolved incidents</small><i class="fa-regular fa-circle-check"></i>
+                <span>OPEN INCIDENTS</span><strong id="activeIncidents">…</strong
+                ><small>Pending, dispatched, or active</small><i class="fa-regular fa-bell"></i>
               </div>
               <div class="stat orange">
-                <span>PENDING</span><strong id="pendingIncidents">0</strong
+                <span>PENDING</span><strong id="pendingIncidents">…</strong
                 ><small>Requires attention</small><i class="fa-regular fa-clock"></i>
+              </div>
+              <div class="stat blue">
+                <span>ACTIVE RESPONDERS</span><strong id="responderCount">…</strong
+                ><small>Available or deployed</small><i class="fa-regular fa-user"></i>
+              </div>
+              <div class="stat purple">
+                <span>TOTAL INCIDENTS</span><strong id="totalIncidents">…</strong
+                ><small>All recorded incidents</small><i class="fa-regular fa-file-lines"></i>
+              </div>
+              <div class="stat green">
+                <span>COMPLETED</span><strong id="completedIncidents">…</strong
+                ><small>Resolved incidents</small><i class="fa-regular fa-circle-check"></i>
               </div>
             </div>
             <div class="grid">
@@ -148,25 +161,25 @@
                 <div id="recentIncidents"></div>
               </section>
               <section class="card response">
-                <div class="head"><h2>Response Status</h2></div>
+                <div class="head"><h2>Resolution Rate</h2></div>
                 <div class="meter">
                   <svg viewBox="0 0 120 120">
                     <circle class="track" cx="60" cy="60" r="48" />
                     <circle class="progress" id="responseProgress" cx="60" cy="60" r="48" />
                   </svg>
                   <div>
-                    <strong id="responseRate">0%</strong><small>Response<br />Status</small>
+                    <strong id="responseRate">…</strong><small>Resolved<br />All time</small>
                   </div>
                 </div>
                 <p class="increase" id="responseSummary">Loading...</p>
                 <hr />
-                <div class="row">🟢 On Scene <b id="onScene">0</b></div>
-                <div class="row">🔵 En Route <b id="enRoute">0</b></div>
-                <div class="row">🟠 Standby <b id="standby">0</b></div>
+                <div class="row">🟢 On Scene <b id="onScene">…</b></div>
+                <div class="row">🔵 En Route <b id="enRoute">…</b></div>
+                <div class="row">🟠 Standby <b id="standby">…</b></div>
               </section>
               <section class="card responders">
                 <div class="head">
-                  <h2>Available Responders</h2>
+                  <h2>Responder Roster</h2>
                   <a
                     href="#"
                     onclick="
@@ -250,6 +263,7 @@
                   <h2>Needs Dispatch</h2>
                   <span class="pill critical" id="dispatchCount">0</span>
                 </div>
+                <p class="dispatch-queue-hint">Highest priority first, then oldest report.</p>
                 <div id="dispatchQueue"></div>
               </div>
               <div class="card responder-availability-card">
@@ -634,9 +648,9 @@
 
     <div class="toast" id="toast"></div>
     <script src="assets/js/deployment-config.js"></script>
-    <script src="assets/js/api-base.js"></script>
+    <script src="assets/js/api-base.js?v=20261102-1"></script>
     <script src="assets/js/notification-sound.js"></script>
-    <script src="assets/js/script.js?v=20261009-3"></script>
+    <script src="assets/js/script.js?v=20261102-1"></script>
     <script src="assets/js/session-timeout.js"></script>
     <script>
       if ('serviceWorker' in navigator) {

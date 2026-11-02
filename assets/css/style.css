@@ -8260,33 +8260,6 @@ main {
   }
 }
 
-/* Needs Dispatch: show a maximum of five incidents, then scroll inside the list. */
-#page-dispatch #dispatchQueue {
-  height: 650px !important;
-  max-height: 650px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  flex: 0 0 650px !important;
-  box-sizing: border-box !important;
-}
-
-#page-dispatch #dispatchQueue .dispatch-item {
-  min-height: 130px !important;
-  box-sizing: border-box !important;
-}
-
-@media (max-width: 700px) {
-  #page-dispatch #dispatchQueue {
-    height: 750px !important;
-    max-height: 750px !important;
-    flex: 0 0 750px !important;
-  }
-
-  #page-dispatch #dispatchQueue .dispatch-item {
-    min-height: 150px !important;
-  }
-}
-
 /* ===== DISPATCH CENTER FINAL UI/UX PASS ===== */
 #page-dispatch.active-page {
   height: auto !important;
@@ -8323,8 +8296,8 @@ main {
 /* Exactly five normal desktop rows are visible; remaining rows scroll inside the list. */
 #page-dispatch #dispatchQueue {
   flex: 0 0 auto !important;
-  height: 500px !important;
-  max-height: 500px !important;
+  height: auto !important;
+  max-height: min(60vh, 500px) !important;
   min-height: 0 !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -8492,8 +8465,8 @@ main {
   }
 
   #page-dispatch #dispatchQueue {
-    height: 500px !important;
-    max-height: 500px !important;
+    height: auto !important;
+    max-height: min(60vh, 500px) !important;
   }
 
   #page-dispatch #dispatchResponders {
@@ -8509,8 +8482,8 @@ main {
   }
 
   #page-dispatch #dispatchQueue {
-    height: 500px !important;
-    max-height: 500px !important;
+    height: auto !important;
+    max-height: min(60vh, 500px) !important;
   }
 
   #page-dispatch #dispatchQueue .dispatch-item {
@@ -8538,13 +8511,75 @@ main {
 
 @media (max-width: 420px) {
   #page-dispatch #dispatchQueue {
-    height: 480px !important;
-    max-height: 480px !important;
+    height: auto !important;
+    max-height: min(60vh, 500px) !important;
   }
 
   #page-dispatch #dispatchResponders {
     height: 300px !important;
     max-height: 300px !important;
+  }
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.api-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.api-status.error {
+  border-color: #f2c6c6 !important;
+  background: #fff0f0 !important;
+  color: #a52626 !important;
+}
+
+.api-status.online {
+  border-color: #d9ebe3 !important;
+  background: #eaf7f0 !important;
+  color: #32745f !important;
+}
+
+.api-status.loading {
+  border-color: #dce5ea !important;
+  background: #f2f5f6 !important;
+  color: #52636b !important;
+}
+
+.api-updated {
+  margin-left: auto;
+  color: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.82;
+}
+
+#retryDashboard[hidden] {
+  display: none;
+}
+
+.dispatch-queue-hint {
+  margin: -5px 0 12px;
+  color: var(--v-muted, #718087);
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  .api-updated {
+    width: 100%;
+    margin-left: 0;
   }
 }
 

@@ -5,6 +5,9 @@ LimitRequestBody 8388608
 
 RewriteEngine On
 
+# Open the public sign-in page when visitors use the bare domain.
+RewriteRule ^$ login.html [R=302,L]
+
 # Public entry points are stored under /public but exposed as clean root routes.
 RewriteRule ^login\.html$ public/login.html [END,QSA]
 RewriteRule ^bystander-sos\.html$ public/bystander-sos.html [END,QSA]

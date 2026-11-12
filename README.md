@@ -1,6 +1,6 @@
 # Barangay Tondod Emergency Dispatch and Real-Time Incident Management System
 
-This is an existing PHP/MySQL web application for incident reporting, dispatch, responder management, notifications, and reports. It is intended to be run through Apache/PHP and MySQL (for example, XAMPP).
+Barangay Tondod Emergency Dispatch and Real-Time Incident Management System is a PHP/MySQL web app for reporting emergencies, dispatching responders, tracking incidents, and sending alerts in real time.
 
 ## Important database safety
 

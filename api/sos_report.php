@@ -46,8 +46,8 @@ if ($loc === '') {
 }
 $phone = trim((string) ($d['contact_number'] ?? ''));
 $phoneDigits = preg_replace('/\\D+/', '', $phone);
-if ($phone === '' || strlen($phoneDigits) < 7 || strlen($phoneDigits) > 15) {
-  json_response(['success' => false, 'message' => 'A valid contact number is required (7 to 15 digits).'], 422);
+if ($phone === '' || strlen($phoneDigits) !== 11) {
+  json_response(['success' => false, 'message' => 'An 11-digit contact number is required.'], 422);
 }
 if (!isset($_FILES['incident_photo']) || ($_FILES['incident_photo']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
   json_response(['success' => false, 'message' => 'An incident photo is required. Please capture or upload a photo.'], 422);

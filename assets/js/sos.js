@@ -214,8 +214,8 @@ async function sendSOS() {
     q('#contact').focus();
     return;
   }
-  if (contactDigits.length < 7 || contactDigits.length > 15) {
-    er.textContent = 'Please enter a valid contact number containing 7 to 15 digits.';
+  if (contactDigits.length !== 11) {
+    er.textContent = 'Please enter an 11-digit contact number.';
     er.classList.remove('hidden');
     q('#contact').focus();
     return;
